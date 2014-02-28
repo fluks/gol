@@ -8,13 +8,13 @@ main(int argc, char **argv) {
     int rows, cols;
     double probability_alive;
     if (!options_getopt(argc, argv, &rows, &cols, &probability_alive))
-        return 1;
-    int exit_value = 0;
+        exit(EXIT_FAILURE);
+    int exit_value = EXIT_SUCCESS;
     srand(time(NULL));
 
     struct gol *g = gol_init(rows, cols, probability_alive);
     if (!g) {
-        exit_value = 1;
+        exit_value = EXIT_FAILURE;
         goto end;
     }
     gol_run(g);
