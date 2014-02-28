@@ -14,12 +14,12 @@ read_int_arg(const char *arg, int *result) {
 }
 
 bool
-options_getopt(int argc, char **argv, int *rows, int *cols, double *p) {
+options_getopt(int argc, char **argv, int *rows, int *columns, double *p) {
     if (argc < 3 || argc > 4)
         return false;
     if (!read_int_arg(argv[1], rows))
         return false;
-    if (!read_int_arg(argv[2], cols))
+    if (!read_int_arg(argv[2], columns))
         return false;
     if (argc == 4) {
         *p = strtod(argv[3], NULL);

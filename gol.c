@@ -18,30 +18,30 @@ foreach_object(struct gol *g, callback cb) {
 
 static int
 get_number_of_alive_neighbors(const struct gol *g, int y, int x) {
-    int alive_neighbors = 0;
+    int n = 0;
     // Row above current object.
     if (y - 1 >= 0) {
         if (x - 1 >= 0)
-            alive_neighbors += g->table[y - 1][x - 1].alive_this_round ? 1 : 0;
-        alive_neighbors += g->table[y - 1][x].alive_this_round ? 1 : 0;
+            n += g->table[y - 1][x - 1].alive_this_round ? 1 : 0;
+        n += g->table[y - 1][x].alive_this_round ? 1 : 0;
         if (x + 1 < g->columns)
-            alive_neighbors += g->table[y - 1][x + 1].alive_this_round ? 1 : 0;
+            n += g->table[y - 1][x + 1].alive_this_round ? 1 : 0;
     }
     // Same row as current object.
     if (x - 1 >= 0)
-        alive_neighbors += g->table[y][x - 1].alive_this_round ? 1 : 0;
+        n += g->table[y][x - 1].alive_this_round ? 1 : 0;
     if (x + 1 < g->columns)
-        alive_neighbors += g->table[y][x + 1].alive_this_round ? 1 : 0;
+        n += g->table[y][x + 1].alive_this_round ? 1 : 0;
     // Row below current object.
     if (y + 1 < g->rows) {
         if (x - 1 >= 0)
-            alive_neighbors += g->table[y + 1][x - 1].alive_this_round ? 1 : 0;
-        alive_neighbors += g->table[y + 1][x].alive_this_round ? 1 : 0;
+            n += g->table[y + 1][x - 1].alive_this_round ? 1 : 0;
+        n += g->table[y + 1][x].alive_this_round ? 1 : 0;
         if (x + 1 < g->columns)
-            alive_neighbors += g->table[y + 1][x + 1].alive_this_round ? 1 : 0;
+            n += g->table[y + 1][x + 1].alive_this_round ? 1 : 0;
     }
 
-    return alive_neighbors;
+    return n;
 }
 
 static bool
