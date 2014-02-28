@@ -5,13 +5,13 @@
 #include <stdio.h>
 #define WAIT_NSECS 300000000L
 
-typedef void (*callback)(struct gol*, int, int);
+typedef void (*callback)(struct gol*, void*, int, int);
 
 static void
-foreach_object(struct gol *g, callback cb) {
+foreach_object(struct gol *g, void *data, callback cb) {
     for (int y = 0; y < g->rows; y++) {
         for (int x = 0; x < g->columns; x++) {
-            cb(g, y, x);
+            cb(g, data, y, x);
         }
     }
 }
@@ -60,18 +60,22 @@ alive_next_round(struct gol *g, int y, int x) {
 }
 
 static void
-set_alive_next_round_cb(struct gol *g, int y, int x) {
+set_alive_next_round_cb(struct gol *g, void *data, int y, int x) {
     g->table[y][x].alive_next_round = alive_next_round(g, y, x);
 }
 
 static void
-set_alive_this_round_cb(struct gol *g, int y, int x) {
+set_alive_this_round_cb(struct gol *g, void *data, int y, int x) {
+    int *objects_moved = data;
+    if (g->table[y][x].alive_this_round != g->table[y][x].alive_next_round)
+        (*objects_moved)++;
+
     g->table[y][x].alive_this_round = g->table[y][x].alive_next_round;
     g->table[y][x].alive_next_round = false;
 }
 
 static void
-print_cb(struct gol *g, int y, int x) {
+print_cb(struct gol *g, void *data, int y, int x) {
     printf("%c", g->table[y][x].alive_this_round ? 'o' : ' ');
     if (x == g->columns - 1)
         printf("\n");
@@ -125,11 +129,15 @@ gol_free(struct gol *g) {
 
 void
 gol_run(struct gol *g) {
+    int objects_moved = 0;
     while (1) {
         system("clear");
-        foreach_object(g, print_cb);
-        foreach_object(g, set_alive_next_round_cb);
-        foreach_object(g, set_alive_this_round_cb);
+        foreach_object(g, NULL, print_cb);
+        foreach_object(g, NULL, set_alive_next_round_cb);
+        foreach_object(g, &objects_moved, set_alive_this_round_cb);
+        if (!objects_moved)
+            break;
+        objects_moved = 0;
         gsleep();
     }
 }
