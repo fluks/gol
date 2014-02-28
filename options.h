@@ -1,6 +1,5 @@
 #ifndef OPTIONS_H
     #define OPTIONS_H
-
 #include <stdbool.h>
 
 bool

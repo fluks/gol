@@ -1,8 +1,9 @@
 #ifndef GOL_H
     #define GOL_H
+#include <stdbool.h>
 
 struct object {
-    int alive_this_round, alive_next_round;
+    bool alive_this_round, alive_next_round;
 };
 
 struct gol {

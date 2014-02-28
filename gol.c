@@ -22,41 +22,41 @@ get_number_of_alive_neighbors(const struct gol *g, int y, int x) {
     // Row above current object.
     if (y - 1 >= 0) {
         if (x - 1 >= 0)
-            alive_neighbors += g->table[y - 1][x - 1].alive_this_round;
-        alive_neighbors += g->table[y - 1][x].alive_this_round;
+            alive_neighbors += g->table[y - 1][x - 1].alive_this_round ? 1 : 0;
+        alive_neighbors += g->table[y - 1][x].alive_this_round ? 1 : 0;
         if (x + 1 < g->columns)
-            alive_neighbors += g->table[y - 1][x + 1].alive_this_round;
+            alive_neighbors += g->table[y - 1][x + 1].alive_this_round ? 1 : 0;
     }
     // Same row as current object.
     if (x - 1 >= 0)
-        alive_neighbors += g->table[y][x - 1].alive_this_round;
+        alive_neighbors += g->table[y][x - 1].alive_this_round ? 1 : 0;
     if (x + 1 < g->columns)
-        alive_neighbors += g->table[y][x + 1].alive_this_round;
+        alive_neighbors += g->table[y][x + 1].alive_this_round ? 1 : 0;
     // Row below current object.
     if (y + 1 < g->rows) {
         if (x - 1 >= 0)
-            alive_neighbors += g->table[y + 1][x - 1].alive_this_round;
-        alive_neighbors += g->table[y + 1][x].alive_this_round;
+            alive_neighbors += g->table[y + 1][x - 1].alive_this_round ? 1 : 0;
+        alive_neighbors += g->table[y + 1][x].alive_this_round ? 1 : 0;
         if (x + 1 < g->columns)
-            alive_neighbors += g->table[y + 1][x + 1].alive_this_round;
+            alive_neighbors += g->table[y + 1][x + 1].alive_this_round ? 1 : 0;
     }
 
     return alive_neighbors;
 }
 
-static int
+static bool
 alive_next_round(struct gol *g, int y, int x) {
     int n = get_number_of_alive_neighbors(g, y, x);
     if (g->table[y][x].alive_this_round) {
         if (n < 2)
-            return 0;
+            return false;
         else if (n == 2 || n == 3)
-            return 1;
+            return true;
         else
-            return 0;
+            return false;
     }
     else
-        return n == 3 ? 1 : 0;
+        return n == 3 ? true : false;
 }
 
 static void
@@ -67,7 +67,7 @@ set_alive_next_round_cb(struct gol *g, int y, int x) {
 static void
 set_alive_this_round_cb(struct gol *g, int y, int x) {
     g->table[y][x].alive_this_round = g->table[y][x].alive_next_round;
-    g->table[y][x].alive_next_round = 0;
+    g->table[y][x].alive_next_round = false;
 }
 
 static void
@@ -97,8 +97,8 @@ gol_init(int rows, int columns, double probability_alive) {
             return NULL;
         for (int x = 0; x < columns; x++) {
              g->table[y][x].alive_this_round =
-                 ((double) rand() / RAND_MAX) <= probability_alive ? 1 : 0;
-             g->table[y][x].alive_next_round = 0; 
+                 ((double) rand() / RAND_MAX) <= probability_alive ? true : false;
+             g->table[y][x].alive_next_round = false; 
         }
     }
     g->rows = rows;
