@@ -77,9 +77,9 @@ print_cb(struct gol *g, int y, int x) {
         printf("\n");
 }
 
-static void
-gsleep(long nanoseconds) {
-    const struct timespec t = { .tv_sec = 0, .tv_nsec = nanoseconds };
+static inline void
+gsleep() {
+    static const struct timespec t = { .tv_sec = 0, .tv_nsec = WAIT_NSECS };
     nanosleep(&t, NULL);
 }
 
@@ -130,6 +130,6 @@ gol_run(struct gol *g) {
         foreach_object(g, print_cb);
         foreach_object(g, set_alive_next_round_cb);
         foreach_object(g, set_alive_this_round_cb);
-        gsleep(WAIT_NSECS);
+        gsleep();
     }
 }
