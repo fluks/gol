@@ -5,14 +5,14 @@
 
 int
 main(int argc, char **argv) {
-    int rows, cols;
+    int rows, columns;
     double probability_alive;
-    if (!options_getopt(argc, argv, &rows, &cols, &probability_alive))
+    if (!options_getopt(argc, argv, &rows, &columns, &probability_alive))
         exit(EXIT_FAILURE);
     int exit_value = EXIT_SUCCESS;
     srand(time(NULL));
 
-    struct gol *g = gol_init(rows, cols, probability_alive);
+    struct gol *g = gol_init(rows, columns, probability_alive);
     if (!g) {
         exit_value = EXIT_FAILURE;
         goto end;
