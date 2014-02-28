@@ -130,7 +130,7 @@ gol_free(struct gol *g) {
 void
 gol_run(struct gol *g) {
     int objects_moved = 0;
-    while (1) {
+    while (true) {
         system("clear");
         foreach_object(g, NULL, print_cb);
         foreach_object(g, NULL, set_alive_next_round_cb);
