@@ -12,10 +12,9 @@ Compile
 Usage
 ---
 
-    ./gol <ROWS> <COLUMS> [PROBABILITY]
+    ./gol -r ROWS -c COLUMNS -p PROBABILITY
 
 TODO
 ----
 
 * Use ncurses to print and maybe to control the game
-* Use GNU getopt for command line options

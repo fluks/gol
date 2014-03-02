@@ -1,5 +1,6 @@
 #ifndef GOL_H
     #define GOL_H
+#include "options.h"
 #include <stdbool.h>
 
 struct object {
@@ -12,7 +13,7 @@ struct gol {
 };
 
 struct gol*
-gol_init(int rows, int columns, double probability_alive);
+gol_init(const struct options_opts *opts);
 
 void
 gol_free(struct gol *g);

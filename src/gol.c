@@ -88,25 +88,25 @@ gsleep() {
 }
 
 struct gol*
-gol_init(int rows, int columns, double probability_alive) {
+gol_init(const struct options_opts *opts) {
     struct gol *g = malloc(sizeof(*g));
     if (!g)
         return NULL;
-    g->table = malloc(sizeof(*(g->table)) * rows);
+    g->table = malloc(sizeof(*(g->table)) * opts->rows);
     if (!g->table)
         return NULL;
-    for (int y = 0; y < rows; y++) {
-        g->table[y] = malloc(sizeof(**(g->table)) * columns);
+    for (int y = 0; y < opts->rows; y++) {
+        g->table[y] = malloc(sizeof(**(g->table)) * opts->columns);
         if (!g->table[y])
             return NULL;
-        for (int x = 0; x < columns; x++) {
+        for (int x = 0; x < opts->columns; x++) {
              g->table[y][x].alive_this_round =
-                 ((double) rand() / RAND_MAX) <= probability_alive ? true : false;
+                 ((double) rand() / RAND_MAX) <= opts->probability ? true : false;
              g->table[y][x].alive_next_round = false; 
         }
     }
-    g->rows = rows;
-    g->columns = columns;
+    g->rows = opts->rows;
+    g->columns = opts->columns;
 
     return g;
 }
