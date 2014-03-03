@@ -1,7 +1,6 @@
 #include "gol.h"
 #include "options.h"
 #include <stdlib.h>
-#include <time.h>
 
 int
 main(int argc, char **argv) {
@@ -14,7 +13,6 @@ main(int argc, char **argv) {
         exit(EXIT_SUCCESS);
 
     int exit_value = EXIT_SUCCESS;
-    srand(time(NULL));
 
     struct gol *g = gol_init(&opts);
     if (!g) {

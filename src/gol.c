@@ -56,7 +56,7 @@ alive_next_round(struct gol *g, int y, int x) {
             return false;
     }
     else
-        return n == 3 ? true : false;
+        return n == 3;
 }
 
 static void
@@ -87,6 +87,11 @@ gsleep() {
     nanosleep(&t, NULL);
 }
 
+static inline bool
+is_object_alive_at_start(double probability) {
+     return ((double) rand() / RAND_MAX) <= probability;
+}
+
 struct gol*
 gol_init(const struct options_opts *opts) {
     struct gol *g = malloc(sizeof(*g));
@@ -95,13 +100,14 @@ gol_init(const struct options_opts *opts) {
     g->table = malloc(sizeof(*(g->table)) * opts->rows);
     if (!g->table)
         return NULL;
+    srand(time(NULL));
     for (int y = 0; y < opts->rows; y++) {
         g->table[y] = malloc(sizeof(**(g->table)) * opts->columns);
         if (!g->table[y])
             return NULL;
         for (int x = 0; x < opts->columns; x++) {
              g->table[y][x].alive_this_round =
-                 ((double) rand() / RAND_MAX) <= opts->probability ? true : false;
+                 is_object_alive_at_start(opts->probability);
              g->table[y][x].alive_next_round = false; 
         }
     }
