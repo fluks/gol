@@ -1,8 +1,7 @@
 gol
 ===
 
-Conway's Game of Life in C for illustrative purpose for a friend to help his
-home assignment.
+Conway's Game of Life in C.
 
 Compile
 -------
