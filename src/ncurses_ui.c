@@ -15,7 +15,7 @@ static void
 draw_object_cb(struct gol *g, void *data, int y, int x) {
     char c = g->table[y][x].alive_this_round ? CHAR_ALIVE : CHAR_NOT_ALIVE;
     addch(c);
-    if (getcurx(stdscr) == g->columns - 1)
+    if (x == g->columns)
         addch('\n');
 }
 
