@@ -6,14 +6,15 @@ Conway's Game of Life in C.
 Compile
 -------
 
+With ncurses:
+
+    make ncurses
+
+Without:
+
     make
 
 Usage
 ---
 
     ./gol -r ROWS -c COLUMNS -p PROBABILITY
-
-TODO
-----
-
-* Use ncurses to print and maybe to control the game

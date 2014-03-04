@@ -1,20 +1,12 @@
 #include "gol.h"
+#ifdef HAVE_NCURSES
+    #include "ncurses_ui.h"
+#endif
 #include <stdlib.h>
 #include <time.h>
 #include <limits.h>
 #include <stdio.h>
 #define WAIT_NSECS 300000000L
-
-typedef void (*callback)(struct gol*, void*, int, int);
-
-static void
-foreach_object(struct gol *g, void *data, callback cb) {
-    for (int y = 0; y < g->rows; y++) {
-        for (int x = 0; x < g->columns; x++) {
-            cb(g, data, y, x);
-        }
-    }
-}
 
 static int
 get_number_of_alive_neighbors(const struct gol *g, int y, int x) {
@@ -74,18 +66,14 @@ set_alive_this_round_cb(struct gol *g, void *data, int y, int x) {
     g->table[y][x].alive_next_round = false;
 }
 
+#ifndef HAVE_NCURSES
 static void
 print_cb(struct gol *g, void *data, int y, int x) {
     printf("%c", g->table[y][x].alive_this_round ? 'o' : ' ');
     if (x == g->columns - 1)
         printf("\n");
 }
-
-static inline void
-gsleep() {
-    static const struct timespec t = { .tv_sec = 0, .tv_nsec = WAIT_NSECS };
-    nanosleep(&t, NULL);
-}
+#endif
 
 static inline bool
 is_object_alive_at_start(double probability) {
@@ -136,14 +124,43 @@ gol_free(struct gol *g) {
 void
 gol_run(struct gol *g) {
     int objects_moved = 0;
+    long wait = WAIT_NSECS;
+    #ifdef HAVE_NCURSES
+        if (!ncurses_init(g))
+            return;
+    #endif
     while (true) {
-        system("clear");
-        foreach_object(g, NULL, print_cb);
-        foreach_object(g, NULL, set_alive_next_round_cb);
-        foreach_object(g, &objects_moved, set_alive_this_round_cb);
+        #ifdef HAVE_NCURSES
+            ncurses_draw(g);
+            if (ncurses_handle_key(&wait) == NCURSES_QUIT)
+                break;
+        #else
+            system("clear");
+            gol_foreach_object(g, NULL, print_cb);
+        #endif
+        gol_foreach_object(g, NULL, set_alive_next_round_cb);
+        gol_foreach_object(g, &objects_moved, set_alive_this_round_cb);
         if (!objects_moved)
             break;
         objects_moved = 0;
-        gsleep();
+        gol_sleep(wait);
     }
+    #ifdef HAVE_NCURSES
+        ncurses_end();
+    #endif
+}
+
+void
+gol_foreach_object(struct gol *g, void *data, callback cb) {
+    for (int y = 0; y < g->rows; y++) {
+        for (int x = 0; x < g->columns; x++) {
+            cb(g, data, y, x);
+        }
+    }
+}
+
+void
+gol_sleep(long wait) {
+    const struct timespec t = { .tv_sec = 0, .tv_nsec = wait };
+    nanosleep(&t, NULL);
 }

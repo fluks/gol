@@ -43,7 +43,15 @@ print_help(const char *program_name) {
         "   -c, --columns\n"
         "   -h, --help          print this help\n"
         "   -p, --probability   default %g\n"
-        "   -r, --rows\n",
+        "   -r, --rows\n"
+        #ifdef HAVE_NCURSES
+        "Keys:\n"
+        "   s   stop\n"
+        "   q   quit\n"
+        "   +   speed up\n"
+        "   -   speed down\n"
+        #endif
+        ,
         program_name, DEFAULT_PROBABILTY 
     );
 }

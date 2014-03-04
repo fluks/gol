@@ -12,6 +12,8 @@ struct gol {
     int rows, columns;
 };
 
+typedef void (*callback)(struct gol*, void*, int, int);
+
 struct gol*
 gol_init(const struct options_opts *opts);
 
@@ -20,5 +22,11 @@ gol_free(struct gol *g);
 
 void
 gol_run(struct gol *g);
+
+void
+gol_foreach_object(struct gol *g, void *data, callback cb);
+
+void
+gol_sleep(long wait);
 
 #endif // GOL_H
