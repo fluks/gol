@@ -15,8 +15,8 @@ static void
 draw_object_cb(struct gol *g, void *data, int y, int x) {
     char c = g->table[y][x].alive_this_round ? CHAR_ALIVE : CHAR_NOT_ALIVE;
     addch(c);
-    if (x == g->columns)
-        addch('\n');
+    if (x == g->columns - 1)
+        move(y + 1, 0);
 }
 
 static enum ncurses_return_value
