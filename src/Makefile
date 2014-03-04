@@ -11,12 +11,7 @@ all: $(objects)
 ncurses: CFLAGS += -DHAVE_NCURSES
 ncurses: LDLIBS += -lncurses
 ncurses: objects += ncurses_ui.o
-ncurses: ncurses_ui.o $(objects)
-	$(CC) $(CFLAGS) $(LDLIBS) -o $(executable) $(objects)
-
-ncurses_ui.o: ncurses_ui.c
-	$(CC) $(CFLAGS) $(LDLIBS) -c -o $@ $<
-
+ncurses: ncurses_ui.o all
 
 %.o: %.c
 	$(CC) $(CFLAGS) $(LDLIBS) -c -o $@ $<
