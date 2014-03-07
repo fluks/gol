@@ -6,6 +6,7 @@
 #include <time.h>
 #include <limits.h>
 #include <stdio.h>
+#include <string.h>
 #define WAIT_NSECS 300000000L
 
 static int
@@ -86,20 +87,26 @@ gol_init(const struct options_opts *opts) {
     struct gol *g = malloc(sizeof(*g));
     if (!g)
         return NULL;
+    memset(g, 0, sizeof(*g));
+
     g->table = malloc(sizeof(*(g->table)) * opts->rows);
     if (!g->table)
         return NULL;
+
     srand(time(NULL));
+ 
     for (int y = 0; y < opts->rows; y++) {
         g->table[y] = malloc(sizeof(**(g->table)) * opts->columns);
         if (!g->table[y])
             return NULL;
+
         for (int x = 0; x < opts->columns; x++) {
              g->table[y][x].alive_this_round =
                  is_object_alive_at_start(opts->probability);
              g->table[y][x].alive_next_round = false; 
         }
     }
+    
     g->rows = opts->rows;
     g->columns = opts->columns;
     g->alive_character = opts->alive_character;
