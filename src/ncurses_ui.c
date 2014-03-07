@@ -2,8 +2,6 @@
 #include "gol.h"
 #include <curses.h>
 #include <stdbool.h>
-#define CHAR_ALIVE 'o'
-#define CHAR_NOT_ALIVE ' '
 #define KEY_QUIT 'q'
 #define KEY_STOP 's'
 #define KEY_SPEED_UP '+'
@@ -13,8 +11,9 @@
 
 static void
 draw_object_cb(struct gol *g, void *data, int y, int x) {
-    char c = g->table[y][x].alive_this_round ? CHAR_ALIVE : CHAR_NOT_ALIVE;
-    addch(c);
+    const cchar_t wc = g->table[y][x].alive_this_round ?
+        g->ncurses_alive_character : g->ncurses_not_alive_character;
+    add_wch(&wc);
     if (x == g->columns - 1)
         move(y + 1, 0);
 }
@@ -71,6 +70,11 @@ ncurses_init(struct gol *g) {
     nodelay(stdscr, true);
     clear();
     refresh();
+    
+    setcchar(&g->ncurses_alive_character,
+        (wchar_t*) &g->alive_character, 0, 0, 0);
+    setcchar(&g->ncurses_not_alive_character,
+        (wchar_t*) &g->not_alive_character, 0, 0, 0);
 
     return true;
 }

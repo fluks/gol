@@ -2,6 +2,9 @@
     #define GOL_H
 #include "options.h"
 #include <stdbool.h>
+#ifdef HAVE_NCURSES
+    #include <curses.h>
+#endif
 
 struct object {
     bool alive_this_round, alive_next_round;
@@ -11,6 +14,9 @@ struct gol {
     struct object **table;
     int rows, columns;
     wint_t alive_character, not_alive_character;
+    #ifdef HAVE_NCURSES
+        cchar_t ncurses_alive_character, ncurses_not_alive_character;
+    #endif
 };
 
 typedef void (*callback)(struct gol*, void*, int, int);

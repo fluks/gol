@@ -8,8 +8,8 @@ executable = ../gol
 all: $(objects)
 	$(CC) $(CFLAGS) $(LDLIBS) -o $(executable) $(objects)
 
-ncurses: CFLAGS += -DHAVE_NCURSES
-ncurses: LDLIBS += -lncurses
+ncurses: CFLAGS += -DHAVE_NCURSES $(shell pkg-config --cflags ncursesw)
+ncurses: LDLIBS += $(shell pkg-config --libs ncursesw)
 ncurses: objects += ncurses_ui.o
 ncurses: ncurses_ui.o all
 
