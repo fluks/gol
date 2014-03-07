@@ -65,6 +65,11 @@ first_wide_char_in_str(const char *s, wint_t *wc, const char **error) {
     nbytes = mbrtowc(wa, s + nbytes, MB_LEN_MAX, NULL);
     if (nbytes != 0)
         *error = "is invalid: more than one character";
+    int columns_needed = wcwidth(*wc);
+    if (columns_needed < 1)
+        *error = "is invalid: less than one column wide";
+    else if (columns_needed > 1)
+        *error = "is invalid: more than one column wide";
 }
 
 static void

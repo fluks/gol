@@ -6,7 +6,7 @@ Conway's Game of Life in C.
 Compile
 -------
 
-With ncurses:
+With ncursesw:
 
     make ncurses
 
@@ -17,4 +17,4 @@ Without:
 Usage
 ---
 
-    ./gol -r ROWS -c COLUMNS -p PROBABILITY
+    ./gol -r ROWS -c COLUMNS [OPTIONS]...

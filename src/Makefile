@@ -1,4 +1,10 @@
-CFLAGS = -D_GNU_SOURCE -D_POSIX_C_SOURCE=199309L -std=c11 -Wall -Werror -pedantic -O2
+# getopt_long()
+CFLAGS = -D_GNU_SOURCE
+# nanosleep()
+CFLAGS += -D_POSIX_C_SOURCE=199309L
+# wcwidth()
+CFLAGS += -D_XOPEN_SOURCE
+CFLAGS += -std=c11 -Wall -Werror -pedantic -O2
 LDLIBS = -lm
 objects = main.o gol.o options.o
 executable = ../gol
