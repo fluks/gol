@@ -5,17 +5,26 @@
 #include <stdio.h>
 #include <stdbool.h>
 #include <getopt.h>
+#include <math.h>
 #define DEFAULT_PROBABILTY 0.3
 #define OPTION_NOT_SET -1
 
 static void
 read_int_arg(const char *arg, int *result, const char **error) {
-    long l = strtol(arg, NULL, 10);
-    if (errno == ERANGE || l > INT_MAX) {
+    char *endptr;
+    errno = 0;
+    long l = strtol(arg, &endptr, 10);
+    if (*arg == '\0' || *endptr != '\0') {
+        *error = "is not a number";
+        return;
+    }
+    if ((errno == ERANGE && l == LONG_MAX) || 
+        l > INT_MAX) {
         *error = "too high";
         return;
     }
-    if (l <= 0) {
+    if ((errno == ERANGE && l == LONG_MIN) ||
+        l <= 0) {
         *error = "too low";
         return;
     }
@@ -24,12 +33,18 @@ read_int_arg(const char *arg, int *result, const char **error) {
 
 static void
 read_double_arg(const char *arg, double *result, const char **error) {
-    double d = strtod(arg, NULL);
-    if (errno == ERANGE || d > 1) {
+    char *endptr;
+    errno = 0;
+    double d = strtod(arg, &endptr);
+    if (*arg == '\0' || *endptr != '\0') {
+        *error = "is not a number";
+        return;
+    }
+    if ((errno == ERANGE && d == HUGE_VAL) || d >= 1) {
         *error = "too high";
         return;
     }
-    if (d <= 0) {
+    if ((errno == ERANGE && d == -HUGE_VAL) || d <= 0) {
         *error = "too low";
         return;
     }
