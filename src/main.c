@@ -1,9 +1,12 @@
 #include "gol.h"
 #include "options.h"
 #include <stdlib.h>
+#include <locale.h>
 
 int
 main(int argc, char **argv) {
+    setlocale(LC_CTYPE, "");
+
     struct options_opts opts;
     options_init(&opts);
     enum options_return_value retval = options_getopt(argc, argv, &opts);

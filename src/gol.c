@@ -69,7 +69,8 @@ set_alive_this_round_cb(struct gol *g, void *data, int y, int x) {
 #ifndef HAVE_NCURSES
 static void
 print_cb(struct gol *g, void *data, int y, int x) {
-    printf("%c", g->table[y][x].alive_this_round ? 'o' : ' ');
+    printf("%lc", g->table[y][x].alive_this_round ? g->alive_character :
+                                                    g->not_alive_character);
     if (x == g->columns - 1)
         printf("\n");
 }
@@ -101,6 +102,8 @@ gol_init(const struct options_opts *opts) {
     }
     g->rows = opts->rows;
     g->columns = opts->columns;
+    g->alive_character = opts->alive_character;
+    g->not_alive_character = opts->not_alive_character;
 
     return g;
 }

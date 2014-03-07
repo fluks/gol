@@ -10,6 +10,7 @@ struct object {
 struct gol {
     struct object **table;
     int rows, columns;
+    wint_t alive_character, not_alive_character;
 };
 
 typedef void (*callback)(struct gol*, void*, int, int);

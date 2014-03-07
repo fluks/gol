@@ -1,9 +1,11 @@
 #ifndef OPTIONS_H
     #define OPTIONS_H
+#include <wchar.h>
 
 struct options_opts {
     int rows, columns;
     double probability;
+    wint_t alive_character, not_alive_character;
 };
 
 enum options_return_value {
