@@ -6,6 +6,7 @@ struct options_opts {
     int rows, columns;
     double probability;
     wint_t alive_character, not_alive_character;
+    int options_set;
 };
 
 enum options_return_value {

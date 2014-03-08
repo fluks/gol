@@ -6,10 +6,15 @@
 #include <stdbool.h>
 #include <getopt.h>
 #include <math.h>
+#include <string.h>
 #define DEFAULT_PROBABILTY 0.3
-#define OPTION_NOT_SET -1
 #define DEFAULT_ALIVE_CHARACTER L'o'
 #define DEFAULT_NOT_ALIVE_CHARACTER L' '
+#define OPTION_ROWS                1
+#define OPTION_COLUMNS             2
+#define OPTION_PROBABILITY         4
+#define OPTION_ALIVE_CHARACTER     8
+#define OPTION_NOT_ALIVE_CHARACTER 16
 
 static void
 read_int_arg(const char *arg, int *result, const char **error) {
@@ -112,31 +117,28 @@ init_longopts() {
 
 static enum options_return_value
 validate_and_set_default_options(struct options_opts *opts) {
-    if (opts->columns == OPTION_NOT_SET) {
+    if (!(opts->options_set & OPTION_ALIVE_CHARACTER))
+        opts->alive_character = DEFAULT_ALIVE_CHARACTER;
+    if (!(opts->options_set & OPTION_NOT_ALIVE_CHARACTER))
+        opts->not_alive_character = DEFAULT_NOT_ALIVE_CHARACTER;
+
+    if (!(opts->options_set & OPTION_COLUMNS)) {
         fprintf(stderr, "option columns is not set\n");
         return OPTIONS_ERROR;
     }
-    if (opts->rows == OPTION_NOT_SET) {
+    if (!(opts->options_set & OPTION_ROWS)) {
         fprintf(stderr, "option rows is not set\n");
         return OPTIONS_ERROR;
     }
-    if (opts->probability == OPTION_NOT_SET)
+    if (!(opts->options_set & OPTION_PROBABILITY))
         opts->probability = DEFAULT_PROBABILTY;
-    if (opts->alive_character == (wint_t) OPTION_NOT_SET)
-        opts->alive_character = DEFAULT_ALIVE_CHARACTER;
-    if (opts->not_alive_character == (wint_t) OPTION_NOT_SET)
-        opts->not_alive_character = DEFAULT_NOT_ALIVE_CHARACTER;
 
     return OPTIONS_OK;
 }
 
 void
 options_init(struct options_opts *opts) {
-    opts->rows = OPTION_NOT_SET;
-    opts->columns = OPTION_NOT_SET;
-    opts->probability = OPTION_NOT_SET;
-    opts->alive_character = OPTION_NOT_SET;
-    opts->not_alive_character = OPTION_NOT_SET;
+    memset(opts, 0, sizeof(*opts));
 }
 
 #define HANDLE_ERROR(error, format, return_value) do { \
@@ -160,10 +162,12 @@ options_getopt(int argc, char **argv, struct options_opts *opts) {
                 first_wide_char_in_str(optarg, &opts->alive_character, &error);
                 HANDLE_ERROR(error, "option alive-character %s\n",
                     OPTIONS_ERROR);
+                opts->options_set |= OPTION_ALIVE_CHARACTER;
                 break;
             case 'c':
                 read_int_arg(optarg, &(opts->columns), &error);
                 HANDLE_ERROR(error, "option columns %s\n", OPTIONS_ERROR);
+                opts->options_set |= OPTION_COLUMNS;
                 break;
             case 'h':
                 print_help(argv[0]);
@@ -173,14 +177,17 @@ options_getopt(int argc, char **argv, struct options_opts *opts) {
                     &error);
                 HANDLE_ERROR(error,
                     "option not-alive-character %s\n", OPTIONS_ERROR);
+                opts->options_set |= OPTION_NOT_ALIVE_CHARACTER;
                 break;
             case 'p':
                 read_double_arg(optarg, &(opts->probability), &error);
                 HANDLE_ERROR(error, "option probability %s\n", OPTIONS_ERROR);
+                opts->options_set |= OPTION_PROBABILITY;
                 break;
             case 'r':
                 read_int_arg(optarg, &(opts->rows), &error);
                 HANDLE_ERROR(error, "option rows %s\n", OPTIONS_ERROR);
+                opts->options_set |= OPTION_ROWS;
                 break;
             case '?':
                 return OPTIONS_ERROR;
