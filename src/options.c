@@ -15,6 +15,7 @@
 #define OPTION_PROBABILITY         4
 #define OPTION_ALIVE_CHARACTER     8
 #define OPTION_NOT_ALIVE_CHARACTER 16
+#define OPTION_FILE                32
 
 static void
 read_int_arg(const char *arg, int *result, const char **error) {
@@ -84,6 +85,7 @@ print_help(const char *program_name) {
         "   -a, --alive-character       "
             "a character representing an alive object\n"
         "   -c, --columns\n"
+        "   -f, --file                  read game starting position from file\n"
         "   -h, --help                  print this help\n"
         "   -n, --not-alive-character   "
             "a character representing an object not alive\n"
@@ -106,6 +108,7 @@ init_longopts() {
     static struct option longopts[] = {
         { "alive-character",      1, NULL, 'a' },
         { "columns",              1, NULL, 'c' },
+        { "file",                 1, NULL, 'f' },
         { "help",                 0, NULL, 'h' },
         { "not-alive-character",  1, NULL, 'n' },
         { "probability",          1, NULL, 'p' },
@@ -115,6 +118,17 @@ init_longopts() {
     return longopts;
 }
 
+static const char*
+get_option_str(int flag) {
+    if (flag & OPTION_ROWS)
+        return "rows";
+    if (flag & OPTION_COLUMNS)
+        return "columns";
+    if (flag & OPTION_PROBABILITY)
+        return "probability";
+    return "programming error: should not be reached!";
+}
+
 static enum options_return_value
 validate_and_set_default_options(struct options_opts *opts) {
     if (!(opts->options_set & OPTION_ALIVE_CHARACTER))
@@ -122,16 +136,28 @@ validate_and_set_default_options(struct options_opts *opts) {
     if (!(opts->options_set & OPTION_NOT_ALIVE_CHARACTER))
         opts->not_alive_character = DEFAULT_NOT_ALIVE_CHARACTER;
 
-    if (!(opts->options_set & OPTION_COLUMNS)) {
-        fprintf(stderr, "option columns is not set\n");
-        return OPTIONS_ERROR;
+    if (opts->options_set & OPTION_FILE) {
+        int flag = (opts->options_set & OPTION_ROWS)    |
+                   (opts->options_set & OPTION_COLUMNS) |
+                   (opts->options_set & OPTION_PROBABILITY);
+        if (flag) {
+            fprintf(stderr, "options file and %s are mutually exclusive\n",
+                get_option_str(flag));
+            return OPTIONS_ERROR;
+        }
     }
-    if (!(opts->options_set & OPTION_ROWS)) {
-        fprintf(stderr, "option rows is not set\n");
-        return OPTIONS_ERROR;
+    else {
+        if (!(opts->options_set & OPTION_COLUMNS)) {
+            fprintf(stderr, "option columns is not set\n");
+            return OPTIONS_ERROR;
+        }
+        if (!(opts->options_set & OPTION_ROWS)) {
+            fprintf(stderr, "option rows is not set\n");
+            return OPTIONS_ERROR;
+        }
+        if (!(opts->options_set & OPTION_PROBABILITY))
+            opts->probability = DEFAULT_PROBABILTY;
     }
-    if (!(opts->options_set & OPTION_PROBABILITY))
-        opts->probability = DEFAULT_PROBABILTY;
 
     return OPTIONS_OK;
 }
@@ -150,7 +176,7 @@ options_init(struct options_opts *opts) {
 
 enum options_return_value
 options_getopt(int argc, char **argv, struct options_opts *opts) {
-    const char *shortopts = "a:c:hn:p:r:";
+    const char *shortopts = "a:c:f:hn:p:r:";
     struct option *longopts = init_longopts();
 
     const char *error = NULL;
@@ -168,6 +194,10 @@ options_getopt(int argc, char **argv, struct options_opts *opts) {
                 read_int_arg(optarg, &(opts->columns), &error);
                 HANDLE_ERROR(error, "option columns %s\n", OPTIONS_ERROR);
                 opts->options_set |= OPTION_COLUMNS;
+                break;
+            case 'f':
+                opts->file = optarg;
+                opts->options_set |= OPTION_FILE;
                 break;
             case 'h':
                 print_help(argv[0]);

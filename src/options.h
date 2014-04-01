@@ -6,6 +6,7 @@ struct options_opts {
     int rows, columns;
     double probability;
     wint_t alive_character, not_alive_character;
+    char *file;
     int options_set;
 };
 
