@@ -316,10 +316,10 @@ gol_run(struct gol *g) {
                 break;
         #else
             system("clear");
-            gol_foreach_object(g, NULL, print_cb);
+            gol_foreach_object(g, print_cb, NULL);
         #endif
-        gol_foreach_object(g, NULL, set_alive_next_round_cb);
-        gol_foreach_object(g, &objects_moved, set_alive_this_round_cb);
+        gol_foreach_object(g, set_alive_next_round_cb, NULL);
+        gol_foreach_object(g, set_alive_this_round_cb, &objects_moved);
         if (!objects_moved)
             break;
         objects_moved = 0;
@@ -331,7 +331,7 @@ gol_run(struct gol *g) {
 }
 
 void
-gol_foreach_object(struct gol *g, void *data, callback cb) {
+gol_foreach_object(struct gol *g, callback cb, void *data) {
     for (int y = 0; y < g->rows; y++) {
         for (int x = 0; x < g->columns; x++) {
             cb(g, data, y, x);

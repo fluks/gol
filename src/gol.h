@@ -31,7 +31,7 @@ void
 gol_run(struct gol *g);
 
 void
-gol_foreach_object(struct gol *g, void *data, callback cb);
+gol_foreach_object(struct gol *g, callback cb, void *data);
 
 void
 gol_sleep(long wait);

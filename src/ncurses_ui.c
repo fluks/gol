@@ -83,7 +83,7 @@ void
 ncurses_draw(struct gol *g) {
     move(0, 0);
     refresh();
-    gol_foreach_object(g, NULL, draw_object_cb);
+    gol_foreach_object(g, draw_object_cb, NULL);
     refresh();
 }
 
